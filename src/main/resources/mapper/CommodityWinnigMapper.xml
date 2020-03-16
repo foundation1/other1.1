@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.other.mapper.CommodityWinnigMapper">
+    <resultMap id="commodityWinnigMap" type="com.example.other.entity.CommodityWinnigEntity">
+        <id column="id" property="id"/>
+        <result column="userId" property="u_id"/>
+        <result column="commodityId" property="c_id"/>
+        <result column="addressId" property="address_id"/>
+        <result column="platform" property="platform"/>
+        <result column="number" property="number"/>
+        <result column="status" property="status"/>
+        <result column="gold" property="gold"/>
+        <result column="statusC" property="status_c"/>
+        <result column="money" property="money"/>
+        <result column="creationTime" property="c_time"/>
+        <result column="updateTime" property="u_time"/>
+        <collection property="userAddressDto" ofType="com.example.other.entity.dto.UserAddressDto">
+            <result column="name" property="name"/>
+            <result column="tel" property="tel"/>
+            <result column="province" property="province"/>
+            <result column="city" property="city"/>
+            <result column="county" property="county"/>
+            <result column="addressDetail" property="address_detail"/>
+            <result column="areaCode" property="area_code"/>
+            <result column="postalCode" property="postal_code"/>
+            <result column="isDefault" property="is_default"/>
+        </collection>
+        <collection property="userDto" ofType="com.example.other.entity.dto.UserDto">
+            <result column="userName" property="user_name"/>
+        </collection>
+        <collection property="commodityDto" ofType="com.example.other.entity.dto.CommodityDto">
+            <result column="commodityIntro" property="commodity_intro"/>
+            <result column="commodity" property="commodity"/>
+            <result column="imgPath" property="img_path"/>
+            <result column="price" property="price"/>
+            <result column="goldP" property="gold_p"/>
+        </collection>
+    </resultMap>
+
+    <select id="pageList" resultType="com.example.other.entity.CommodityWinnigEntity">
+        SELECT
+        b1.*,
+        b2.user_name,
+        b4.NAME,
+        b4.tel,
+        b4.province,
+        b4.city,
+        b4.county,
+        b4.address_detail,
+        b4.area_code,
+        b4.postal_code,
+        b4.is_default,
+        b3.commodity_intro,
+        b3.commodity,
+        b3.img_path,
+        b3.price,
+        b3.gold AS gold_p
+        FROM
+        `c_winning` b1
+        LEFT JOIN `user` b2 ON b1.u_id = b2.id
+        LEFT JOIN c_commodity b3 ON b1.c_id = b3.id
+        LEFT JOIN u_address b4 ON b1.address_id = b4.id
+        <where>
+            <if test="id!=null">
+                b1.u_id= #{id}
+            </if>
+        </where>
+    </select>
+</mapper>

@@ -1,0 +1,21 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    name: test  #数据库名
+    url: jdbc:mysql://192.168.13.128:3306/other?useUnicode=true&characterEncoding=utf-8 #url
+    username: root  #用户名
+    password: 123456  #密码
+    driver-class-name: com.mysql.jdbc.Driver
+logging:
+  level:
+    com.baomidou.mybatisplus.samples: info
+
+prop:
+  upload-folder: E:/test/
+
+mybatis-plus:
+  mapper-locations: classpath:/mapper/*Mapper.xml
+  type-aliases-package: com.example.other.entity
+
