@@ -34,11 +34,33 @@ public class CommodityWinnigEntity extends Model<CommodityWinnigEntity> {
     private BigDecimal gold;
     private String statusC;
     @TableField(exist = false)
-    private UserAddressDto userAddressDto;
+    private String name;
     @TableField(exist = false)
-    private UserDto userDto;
+    private String tel;
     @TableField(exist = false)
-    private CommodityDto commodityDto;
+    private String province;
+    @TableField(exist = false)
+    private String city;
+    @TableField(exist = false)
+    private String county;
+    @TableField(exist = false)
+    private String addressDetail;
+    @TableField(exist = false)
+    private String areaCode;
+    @TableField(exist = false)
+    private String postalCode;
+    @TableField(exist = false)
+    private String userName;
+    @TableField(exist = false)
+    private String commodityIntro;
+    @TableField(exist = false)
+    private String commodity;
+    @TableField(exist = false)
+    private String imgPath;
+    @TableField(exist = false)
+    private BigDecimal price;
+    @TableField(exist = false)
+    private BigDecimal goldP;
 
     public enum STATUS {
         WINNING("W", "中奖"),

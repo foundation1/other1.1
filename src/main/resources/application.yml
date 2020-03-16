@@ -4,9 +4,9 @@ server:
 spring:
   datasource:
     name: test  #数据库名
-    url: jdbc:mysql://192.168.13.128:3306/other?useUnicode=true&characterEncoding=utf-8 #url
+    url: jdbc:mysql://127.0.0.1:3306/other?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC #url
     username: root  #用户名
-    password: 123456  #密码
+    password: root  #密码
     driver-class-name: com.mysql.jdbc.Driver
 logging:
   level:

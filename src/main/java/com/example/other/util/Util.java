@@ -1,12 +1,14 @@
 package com.example.other.util;
 
 import com.example.other.config.jwt.Config;
+import com.example.other.entity.CommodityEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -49,5 +51,21 @@ public class Util {
         map.put("retuln", true);
         map.put("name", "/img/" + filename);
         return map;
+    }
+
+    public static CommodityEntity lotterAlgorithm(List<CommodityEntity> list) {
+        CommodityEntity commodityEntity = null;
+        double sum = list.stream().mapToDouble(CommodityEntity::getProbability).sum();
+        double d = Math.random() * (sum > 100 ? sum : 100);
+        double probabilit = 0D;
+        for (CommodityEntity commodityEntity1 : list) {
+            double p = commodityEntity1.getProbability();
+            if (d >= probabilit && d < (probabilit + p)) {
+                commodityEntity = commodityEntity1;
+                break;
+            }
+            probabilit += p;
+        }
+        return commodityEntity;
     }
 }

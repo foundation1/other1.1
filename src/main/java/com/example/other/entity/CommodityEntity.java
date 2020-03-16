@@ -20,13 +20,13 @@ public class CommodityEntity extends Model<CommodityEntity> {
     @JsonSerialize(using = ToStringSerializer.class)
     @ApiModelProperty(hidden = true)
     private Long id;
-    @TableField(value = "commodity_intro")
     private String commodityIntro;
     private String commodity;
-    @TableField(value = "img_path")
     private String imgPath;
     private BigDecimal price;
-    private BigDecimal gold;
+    private Integer amount;
+    private String typeC;
+    private Double probability;
     //插入时间
     @TableField(value = "creation_time")
     private String creationTime;
