@@ -27,10 +27,33 @@ public class CommodityEntity extends Model<CommodityEntity> {
     private Integer amount;
     private String typeC;
     private Double probability;
+    private BigDecimal gold;
     //插入时间
-    @TableField(value = "creation_time")
     private String creationTime;
     //更新时间
-    @TableField(value = "update_time")
     private String updateTime;
+    public enum TYPEC {
+        OTHER("1", "购买"),
+        FIFTY("2", "50"),
+        ONEHUNDRED("3", "100"),
+        TWOHUNDRED("4", "200"),
+        ;
+        // 成员变量
+        private String name;
+        private String value;
+
+        // 构造方法
+        private TYPEC(String name, String value) {
+            this.name = name;
+            this.value = value;
+        }
+
+        public String getName() {
+            return this.name;
+        }
+
+        public String getValue() {
+            return this.value;
+        }
+    }
 }
