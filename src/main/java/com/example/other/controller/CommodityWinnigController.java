@@ -24,7 +24,7 @@ import javax.annotation.Resource;
  */
 @RestController
 @RequestMapping("/winnig")
-@Api(tags = "用户")
+@Api(tags = "购买或中奖")
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class CommodityWinnigController {
     @Resource
