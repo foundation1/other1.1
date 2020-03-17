@@ -30,8 +30,6 @@ import java.util.Map;
 public class CommodityController {
     @Autowired
     private CommodityService commodityService;
-    @Autowired
-    private UserService userService;
 
     @PostMapping("/add")
     @ApiOperation(value = "添加")
