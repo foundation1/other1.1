@@ -25,7 +25,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/commodity")
-@Api(tags = "删除")
+@Api(tags = "商品与抽奖")
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class CommodityController {
     @Autowired
