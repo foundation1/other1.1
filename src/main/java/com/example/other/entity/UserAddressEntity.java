@@ -32,7 +32,7 @@ public class UserAddressEntity extends Model<UserAddressEntity> {
     @TableField(value = "is_default")
     private String isDefault;
     @TableField(value = "u_id")
-    private String userId;
+    private Long userId;
     //插入时间
     @TableField(value = "creation_time")
     private String creationTime;

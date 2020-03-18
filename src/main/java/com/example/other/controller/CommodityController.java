@@ -11,6 +11,7 @@ import com.example.other.entity.dto.Error;
 import com.example.other.entity.dto.LotteryDto;
 import com.example.other.entity.dto.ReturnMessageDto;
 import com.example.other.service.CommodityService;
+import com.example.other.service.TokenService;
 import com.example.other.service.UserService;
 import com.example.other.util.Util;
 import io.swagger.annotations.Api;
@@ -19,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +32,8 @@ import java.util.Map;
 public class CommodityController {
     @Autowired
     private CommodityService commodityService;
+    @Autowired
+    private TokenService tokenService;
 
     @PostMapping("/add")
     @ApiOperation(value = "添加")
@@ -73,7 +77,9 @@ public class CommodityController {
     @ApiOperation(value = "抽奖")
     @ResponseBody
     @UserLoginToken
-    private ReturnMessageDto lottery(@RequestBody LotteryDto lotteryDto) {
+    private ReturnMessageDto lottery(@RequestBody LotteryDto lotteryDto, HttpServletRequest request) {
+        UserEntity user = tokenService.getUser(request.getHeader("token"));
+        lotteryDto.setUserId(user.getId());
         return commodityService.lottery(lotteryDto);
     }
 }

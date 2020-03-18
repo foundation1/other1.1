@@ -4,8 +4,10 @@ package com.example.other.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.example.other.config.jwt.UserLoginToken;
 import com.example.other.entity.UserAddressEntity;
+import com.example.other.entity.UserEntity;
 import com.example.other.entity.dto.Error;
 import com.example.other.entity.dto.ReturnMessageDto;
+import com.example.other.service.TokenService;
 import com.example.other.service.UserAddressService;
 import com.example.other.service.UserService;
 import io.swagger.annotations.Api;
@@ -13,6 +15,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
@@ -23,14 +26,17 @@ public class UserAddressController {
 
     @Autowired
     private UserAddressService userAddressService;
+    @Autowired
+    private TokenService tokenService;
 
     @PostMapping("/add")
     @ApiOperation(value = "新增地址")
     @ResponseBody
     @UserLoginToken
-    private ReturnMessageDto add(@RequestBody UserAddressEntity userAddressEntity) {
-        ReturnMessageDto returnMessageDto;
-        UserAddressEntity serviceOne = userAddressService.getOne(new QueryWrapper<UserAddressEntity>().lambda().eq(UserAddressEntity::getIsDefault, UserAddressEntity.ISDEFAULT.YES.getName()).eq(UserAddressEntity::getUserId, userAddressEntity.getUserId()));
+    private ReturnMessageDto add(@RequestBody UserAddressEntity userAddressEntity, HttpServletRequest request) {
+        UserEntity user = tokenService.getUser(request.getHeader("token"));
+        userAddressEntity.setUserId(user.getId());
+        UserAddressEntity serviceOne = userAddressService.getOne(new QueryWrapper<UserAddressEntity>().lambda().eq(UserAddressEntity::getIsDefault, UserAddressEntity.ISDEFAULT.YES.getName()).eq(UserAddressEntity::getUserId, user.getId()));
         if (userAddressEntity.getIsDefault().equals(UserAddressEntity.ISDEFAULT.YES.getName())) {
             if (serviceOne != null) {
                 serviceOne.setIsDefault(UserAddressEntity.ISDEFAULT.NO.getName());
@@ -41,7 +47,7 @@ public class UserAddressController {
             userAddressEntity.setIsDefault(UserAddressEntity.ISDEFAULT.YES.getName());
         }
         userAddressService.save(userAddressEntity);
-        return returnMessageDto = new ReturnMessageDto(Error.INFO_200);
+        return new ReturnMessageDto(Error.INFO_200);
     }
 
     @PostMapping("/update")
@@ -49,9 +55,8 @@ public class UserAddressController {
     @ResponseBody
     @UserLoginToken
     private ReturnMessageDto update(@RequestBody UserAddressEntity userAddressEntity) {
-        ReturnMessageDto returnMessageDto;
         userAddressService.updateById(userAddressEntity);
-        return returnMessageDto = new ReturnMessageDto(Error.INFO_200);
+        return new ReturnMessageDto(Error.INFO_200);
     }
 
     @PostMapping("/delete")
@@ -59,9 +64,8 @@ public class UserAddressController {
     @ResponseBody
     @UserLoginToken
     private ReturnMessageDto delete(@RequestBody UserAddressEntity userAddressEntity) {
-        ReturnMessageDto returnMessageDto;
         userAddressService.removeById(userAddressEntity.getId());
-        return returnMessageDto = new ReturnMessageDto(Error.INFO_200);
+        return new ReturnMessageDto(Error.INFO_200);
     }
 
     @PostMapping("/page")
