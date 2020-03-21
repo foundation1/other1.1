@@ -56,7 +56,7 @@ CREATE TABLE `c_winning`  (
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '中奖记录和购买记录' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
--- Table structure for recharge_record
+-- Table structure for recharge_recor   d
 -- ----------------------------
 DROP TABLE IF EXISTS `recharge_record`;
 CREATE TABLE `recharge_record`  (
