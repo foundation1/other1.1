@@ -1,5 +1,6 @@
 package com.example.other.controller;
 
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.other.config.jwt.UserLoginToken;
 import com.example.other.entity.CommodityWinnigEntity;
@@ -36,13 +37,10 @@ public class CommodityWinnigController {
     @ApiOperation(value = "获取列表")
     @ResponseBody
     @UserLoginToken
-    public ReturnMessageDto userList(@RequestBody Page page, @RequestBody CommodityWinnigEntity commodityWinnigEntity, HttpServletRequest httpServletRequest) {
+    public ReturnMessageDto userList(Page page, CommodityWinnigEntity commodityWinnigEntity, HttpServletRequest httpServletRequest) {
         UserEntity user = tokenService.getUser(httpServletRequest.getHeader("token"));
-        if (user.getType().equals(UserEntity.TYPE.USER.getName())) {
-            commodityWinnigEntity.setUserId(user.getId());
-        }
-        page = commodityWinnigService.pageList(page, commodityWinnigEntity);
-        return new ReturnMessageDto(page.getRecords(), page.getCurrent(), Error.INFO_200);
+        page = commodityWinnigService.pageList(page, commodityWinnigEntity, user);
+        return new ReturnMessageDto(page.getRecords(), page.getTotal(), Error.INFO_200);
     }
 
     @GetMapping("/save")

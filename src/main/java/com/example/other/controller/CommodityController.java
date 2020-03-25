@@ -1,7 +1,9 @@
 package com.example.other.controller;
 
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.other.config.jwt.Config;
 import com.example.other.config.jwt.UserLoginToken;
 import com.example.other.entity.CommodityEntity;
@@ -22,12 +24,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
+import java.sql.Struct;
 import java.util.List;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/commodity")
-@Api(tags = "商品与抽奖")
+@Api(tags = "商品")
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class CommodityController {
     @Autowired
@@ -35,19 +38,19 @@ public class CommodityController {
     @Autowired
     private TokenService tokenService;
 
-    @PostMapping("/add")
+    @PostMapping(value = "/add", produces = "application/json;charset=utf-8")
     @ApiOperation(value = "添加")
     @ResponseBody
     @UserLoginToken
-    private ReturnMessageDto add(@RequestParam(name = "file", required = false) MultipartFile file, @RequestBody CommodityEntity commodityEntity) {
+    private ReturnMessageDto add(@RequestParam(name = "file", required = false) MultipartFile file, CommodityEntity commodityEntity) {
         return commodityService.addAll(file, commodityEntity);
     }
 
-    @PostMapping("/update")
+    @PostMapping(value = "/update", produces = "application/json;charset=utf-8")
     @ApiOperation(value = "修改")
     @ResponseBody
     @UserLoginToken
-    private ReturnMessageDto update(@RequestParam(name = "file", required = false) MultipartFile file, @RequestBody CommodityEntity commodityEntity) {
+    private ReturnMessageDto update(@RequestParam(name = "file", required = false) MultipartFile file, CommodityEntity commodityEntity) {
         return commodityService.updateAll(file, commodityEntity);
     }
 
@@ -60,17 +63,21 @@ public class CommodityController {
         return new ReturnMessageDto(Error.INFO_200);
     }
 
-    @PostMapping("/page")
+    @GetMapping("/page")
     @ApiOperation(value = "列表")
     @ResponseBody
     @UserLoginToken
-    private ReturnMessageDto page(@RequestBody CommodityEntity commodityEntity) {
+    private ReturnMessageDto page(Page page, CommodityEntity commodityEntity, HttpServletRequest httpServletRequest) {
+        UserEntity user = tokenService.getUser(httpServletRequest.getHeader("token"));
         LambdaQueryWrapper<CommodityEntity> lambda = new QueryWrapper<CommodityEntity>().lambda();
-        if (!commodityEntity.getTypeC().equals(CommodityEntity.TYPEC.OTHER.getName())) {
+        if (!StrUtil.hasEmpty(commodityEntity.getCommodity())) {
+            lambda.like(CommodityEntity::getCommodity, commodityEntity.getCommodity());
+        }
+        if (!StrUtil.hasEmpty(commodityEntity.getTypeC())) {
             lambda.eq(CommodityEntity::getTypeC, commodityEntity.getTypeC());
         }
-        List<CommodityEntity> list = commodityService.list(lambda);
-        return new ReturnMessageDto(list, Error.INFO_200);
+        page = commodityService.page(page, lambda);
+        return new ReturnMessageDto(page.getRecords(), page.getTotal(), Error.INFO_200);
     }
 
     @PostMapping("/lottery")

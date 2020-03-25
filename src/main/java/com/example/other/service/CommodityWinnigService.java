@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.other.entity.CommodityWinnigEntity;
 import com.example.other.entity.UserAddressEntity;
+import com.example.other.entity.UserEntity;
 import org.apache.ibatis.annotations.Param;
 
 
@@ -18,5 +19,5 @@ public interface CommodityWinnigService extends IService<CommodityWinnigEntity> 
      * @Date 2020/3/16
      * @Time 16:07
      **/
-    Page<CommodityWinnigEntity> pageList(Page<CommodityWinnigEntity> page, @Param("entity") CommodityWinnigEntity commodityWinnigEntity);
+    Page<CommodityWinnigEntity> pageList(Page<CommodityWinnigEntity> page, CommodityWinnigEntity commodityWinnigEntity, UserEntity userEntity);
 }

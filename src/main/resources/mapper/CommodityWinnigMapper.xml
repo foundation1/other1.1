@@ -5,7 +5,7 @@
         <id column="id" property="id"/>
         <result property="userId" column="u_id"/>
         <result property="commodityId" column="c_id"/>
-        <result property="addressId" column="address_id"/>
+        <result property="address" column="address"/>
         <result property="platform" column="platform"/>
         <result property="number" column="number"/>
         <result property="status" column="status"/>
@@ -15,48 +15,53 @@
         <result property="updateTime" column="u_time"/>
         <result property="name" column="name"/>
         <result property="tel" column="tel"/>
-        <result property="province" column="province"/>
-        <result property="city" column="city"/>
-        <result property="county" column="county"/>
-        <result property="addressDetail" column="address_detail"/>
-        <result property="areaCode" column="area_code"/>
-        <result property="postalCode" column="postal_code"/>
         <result property="userName" column="user_name"/>
         <result property="commodityIntro" column="commodity_intro"/>
         <result property="commodity" column="commodity"/>
         <result property="imgPath" column="img_path"/>
         <result property="price" column="price"/>
         <result property="goldP" column="gold_p"/>
+        <result property="typeC" column="type_c"/>
     </resultMap>
 
     <select id="pageList" resultType="com.example.other.entity.CommodityWinnigEntity">
         SELECT
         b1.*,
-        b2.user_name,
-        b4.NAME,
-        b4.tel,
-        b4.province,
-        b4.city,
-        b4.county,
-        b4.address_detail,
-        b4.area_code,
-        b4.postal_code,
         b3.commodity_intro,
         b3.commodity,
         b3.img_path,
         b3.price,
-        b3.gold AS gold_p
+        b3.gold AS gold_p,
+        b3.type_c,
+        b2.user_name
         FROM
         `c_winning` b1
         LEFT JOIN `user` b2 ON b1.user_id = b2.id
         LEFT JOIN c_commodity b3 ON b1.commodity_id = b3.id
-        LEFT JOIN u_address b4 ON b1.address_id = b4.id
         <where>
             <if test="entity!=null and entity.userId!=null">
                 b1.user_id= #{entity.userId}
             </if>
-            <if test="entity!=null and entity.status">
+            <if test="entity!=null and entity.status!=null">
                 b1.status = #{entity.status}
+            </if>
+            <if test="status!=null">
+                b2.type = #{status}
+            </if>
+            <if test="entity!=null and entity.userName!=null">
+                b2.user_name like concat('%',#{entity.userName},'%')
+            </if>
+            <if test="entity!=null and entity.id!=null">
+                b1.id like concat('%',#{entity.id},'%')
+            </if>
+            <if test="entity!=null and entity.commodity!=null">
+                b3.commodity like concat('%',#{entity.commodity},'%')
+            </if>
+            <if test="entity!=null and entity.platform!=null">
+                b1.platform like concat('%',#{entity.platform},'%')
+            </if>
+            <if test="entity!=null and entity.name!=null">
+                b1.name like concat('%',#{entity.name},'%')
             </if>
         </where>
     </select>

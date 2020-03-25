@@ -7,7 +7,6 @@ import com.example.other.entity.CommodityWinnigEntity;
 import org.apache.ibatis.annotations.Param;
 
 
-
 public interface CommodityWinnigMapper extends BaseMapper<CommodityWinnigEntity> {
-    Page<CommodityWinnigEntity> pageList(Page<CommodityWinnigEntity> page, @Param("entity") CommodityWinnigEntity commodityWinnigEntity);
+    Page<CommodityWinnigEntity> pageList(Page<CommodityWinnigEntity> page, @Param("entity") CommodityWinnigEntity commodityWinnigEntity, @Param("status") String status);
 }

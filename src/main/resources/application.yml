@@ -4,10 +4,13 @@ server:
 spring:
   datasource:
     name: test  #数据库名
-    url: jdbc:mysql://127.0.0.1:3306/other?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC #url
+    url: jdbc:mysql://192.168.13.128:3306/other?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&characterEncoding=utf8 #url
     username: root  #用户名
-    password: root  #密码
+    password: 123456  #密码
     driver-class-name: com.mysql.jdbc.Driver
+  jackson:
+    generator:
+      write_numbers_as_strings: true
 logging:
   level:
     com.baomidou.mybatisplus.samples: info
@@ -18,4 +21,5 @@ prop:
 mybatis-plus:
   mapper-locations: classpath:/mapper/*Mapper.xml
   type-aliases-package: com.example.other.entity
+
 

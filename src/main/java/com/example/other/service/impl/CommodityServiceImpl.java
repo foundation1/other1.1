@@ -58,6 +58,7 @@ public class CommodityServiceImpl extends ServiceImpl<CommodityMapper, Commodity
             }
         }
         commodityEntity.setImgPath(fileName);
+        commodityEntity.setPrice(commodityEntity.getPrice().multiply(new BigDecimal("100")));
         save(commodityEntity);
         return new ReturnMessageDto(Error.INFO_200);
     }
@@ -87,6 +88,7 @@ public class CommodityServiceImpl extends ServiceImpl<CommodityMapper, Commodity
 
     @Override
     public ReturnMessageDto lottery(LotteryDto lotteryDto) {
+        ReturnMessageDto returnMessageDto;
         UserEntity userEntity = userService.getById(lotteryDto.getUserId());
         BigDecimal bigDecimal = BigDecimal.ZERO;
         switch (lotteryDto.getTypeC()) {
@@ -105,8 +107,14 @@ public class CommodityServiceImpl extends ServiceImpl<CommodityMapper, Commodity
         }
         List<CommodityEntity> list = commodityService.list(new QueryWrapper<CommodityEntity>().lambda().eq(CommodityEntity::getTypeC, lotteryDto.getTypeC()));
         CommodityEntity commodityEntity = Util.lotterAlgorithm(list);
-        userEntity.setMoney(userEntity.getMoney().subtract(bigDecimal));
-        userService.updateById(userEntity);
-        return new ReturnMessageDto(commodityEntity, Error.INFO_200);
+        if (commodityEntity != null) {
+            userEntity.setMoney(userEntity.getMoney().subtract(bigDecimal));
+            userService.updateById(userEntity);
+            returnMessageDto = new ReturnMessageDto(commodityEntity, Error.INFO_200);
+        } else {
+            returnMessageDto = new ReturnMessageDto(Error.INFO_208);
+        }
+
+        return returnMessageDto;
     }
 }

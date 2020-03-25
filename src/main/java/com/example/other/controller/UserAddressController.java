@@ -12,6 +12,7 @@ import com.example.other.service.UserAddressService;
 import com.example.other.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,7 +21,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/address")
-@Api(tags = "用户")
+@Api(tags = "地址管理")
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class UserAddressController {
 
@@ -55,6 +56,13 @@ public class UserAddressController {
     @ResponseBody
     @UserLoginToken
     private ReturnMessageDto update(@RequestBody UserAddressEntity userAddressEntity) {
+        if (userAddressEntity.getIsDefault().equals(UserAddressEntity.ISDEFAULT.YES.getName())) {
+            UserAddressEntity serviceOne = userAddressService.getOne(new QueryWrapper<UserAddressEntity>().lambda().eq(UserAddressEntity::getIsDefault, UserAddressEntity.ISDEFAULT.YES.getName()).ne(UserAddressEntity::getId, userAddressEntity.getId()).eq(UserAddressEntity::getUserId, userAddressEntity.getUserId()));
+            if (serviceOne != null) {
+                serviceOne.setIsDefault(UserAddressEntity.ISDEFAULT.NO.getName());
+                userAddressService.updateById(serviceOne);
+            }
+        }
         userAddressService.updateById(userAddressEntity);
         return new ReturnMessageDto(Error.INFO_200);
     }
@@ -68,11 +76,22 @@ public class UserAddressController {
         return new ReturnMessageDto(Error.INFO_200);
     }
 
+    @PostMapping("/getid")
+    @ApiOperation(value = "获取id地址")
+    @ResponseBody
+    @UserLoginToken
+    private ReturnMessageDto getid(@RequestBody UserAddressEntity userAddressEntity) {
+        userAddressEntity = userAddressService.getById(userAddressEntity.getId());
+        return new ReturnMessageDto(userAddressEntity, Error.INFO_200);
+    }
+
     @PostMapping("/page")
     @ApiOperation(value = "地址列表")
     @ResponseBody
     @UserLoginToken
-    private ReturnMessageDto page(@RequestBody UserAddressEntity userAddressEntity) {
+    private ReturnMessageDto page(@RequestBody UserAddressEntity userAddressEntity, HttpServletRequest httpServletRequest) {
+        UserEntity user = tokenService.getUser(httpServletRequest.getHeader("token"));
+        userAddressEntity.setUserId(user.getId());
         List<UserAddressEntity> list = userAddressService.list(new QueryWrapper<UserAddressEntity>().lambda().eq(UserAddressEntity::getUserId, userAddressEntity.getUserId()));
         return new ReturnMessageDto(list, Error.INFO_200);
     }

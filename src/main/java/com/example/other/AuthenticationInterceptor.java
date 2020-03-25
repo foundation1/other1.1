@@ -51,29 +51,25 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
             if (userLoginToken.required()) {
                 // 执行认证
                 if (token == null) {
-                    returnJson(httpServletResponse);
-                    return false;
+                   return  returnJson(httpServletResponse);
                 }
                 // 获取 token 中的 user id
                 String userId;
                 try {
                     userId = JWT.decode(token).getAudience().get(0);
                 } catch (JWTDecodeException j) {
-                    returnJson(httpServletResponse);
-                    return false;
+                    return  returnJson(httpServletResponse);
                 }
                 UserEntity user = UserService.getById(userId);
                 if (user == null) {
-                    returnJson(httpServletResponse);
-                    return false;
+                    return  returnJson(httpServletResponse);
                 }
                 // 验证 token
                 JWTVerifier jwtVerifier = JWT.require(Algorithm.HMAC256(user.getPwd())).build();
                 try {
                     jwtVerifier.verify(token);
                 } catch (JWTVerificationException e) {
-                    returnJson(httpServletResponse);
-                    return false;
+                    return  returnJson(httpServletResponse);
                 }
                 return true;
             }
@@ -89,20 +85,12 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
     }
 
 
-    private void returnJson(HttpServletResponse response) throws Exception {
+    private boolean returnJson(HttpServletResponse response) throws Exception {
         ReturnMessageDto returnMessageDto = new ReturnMessageDto(Error.INFO_203);
         PrintWriter writer = null;
         response.setCharacterEncoding("UTF-8");
         response.setContentType("text/html; charset=utf-8");
-        try {
-            writer = response.getWriter();
-            writer.print(JSONUtil.toJsonStr(returnMessageDto));
-
-        } catch (IOException e) {
-            log.info("response error", e);
-        } finally {
-            if (writer != null)
-                writer.close();
-        }
+        response.sendError(200,"登录异常,请重新登录!");
+        return false;
     }
 }

@@ -23,7 +23,7 @@ public class CommodityWinnigEntity extends Model<CommodityWinnigEntity> {
     private Long id;
     private Long userId;
     private Long commodityId;
-    private Long addressId;
+    private Long address;
     private String platform;
     private String number;
     private String status;
@@ -33,24 +33,8 @@ public class CommodityWinnigEntity extends Model<CommodityWinnigEntity> {
     private String updateTime;
     private BigDecimal gold;
     private String statusC;
-    @TableField(exist = false)
     private String name;
-    @TableField(exist = false)
     private String tel;
-    @TableField(exist = false)
-    private String province;
-    @TableField(exist = false)
-    private String city;
-    @TableField(exist = false)
-    private String county;
-    @TableField(exist = false)
-    private String addressDetail;
-    @TableField(exist = false)
-    private String areaCode;
-    @TableField(exist = false)
-    private String postalCode;
-    @TableField(exist = false)
-    private String userName;
     @TableField(exist = false)
     private String commodityIntro;
     @TableField(exist = false)
@@ -61,6 +45,8 @@ public class CommodityWinnigEntity extends Model<CommodityWinnigEntity> {
     private BigDecimal price;
     @TableField(exist = false)
     private BigDecimal goldP;
+    @TableField(exist = false)
+    private String typeC;
 
     public enum STATUS {
         WINNING("W", "中奖"),

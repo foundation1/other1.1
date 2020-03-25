@@ -66,10 +66,9 @@ public class LoginController {
     @ApiOperation(value = "注册,4个参数都需要传")
     @ResponseBody
     public ReturnMessageDto signIn(@RequestBody UserEntity userEntity) {
-        ReturnMessageDto returnMessageDto;
         UserEntity entity = userService.getOne(new QueryWrapper<UserEntity>().lambda().eq(UserEntity::getUserName, userEntity.getUserName()));
         if (entity != null) {
-            return returnMessageDto = new ReturnMessageDto(Error.INFO_204);
+            new ReturnMessageDto(Error.INFO_204);
         }
         Snowflake snowflake = IdUtil.createSnowflake(1, 1);
         long id = snowflake.nextId();
@@ -85,21 +84,20 @@ public class LoginController {
         userEntity.setInvitationCode(String.valueOf(System.currentTimeMillis()));
         userEntity.setId(id);
         userService.save(userEntity);
-        return returnMessageDto = new ReturnMessageDto(Error.INFO_200);
+        return new ReturnMessageDto(Error.INFO_200);
     }
 
     @PostMapping("/update/pwd")
     @ApiOperation(value = "修改密码,通过用户名和密码修改")
     @ResponseBody
     public ReturnMessageDto updatePwd(@RequestBody UserEntity userEntity) {
-        ReturnMessageDto returnMessageDto;
         UserEntity entity = userService.getOne(new QueryWrapper<UserEntity>().lambda().eq(UserEntity::getUserName, userEntity.getUserName()));
         if (entity == null) {
-            return returnMessageDto = new ReturnMessageDto(Error.INFO_201);
+            return new ReturnMessageDto(Error.INFO_201);
         }
         entity.setPwd(SecureUtil.md5(userEntity.getPwd()));
         userService.updateById(entity);
-        return returnMessageDto = new ReturnMessageDto(Error.INFO_200);
+        return new ReturnMessageDto(Error.INFO_200);
     }
 
 
@@ -115,13 +113,16 @@ public class LoginController {
         return returnMessageDto = new ReturnMessageDto(entity, Error.INFO_200);
     }
 
-    @GetMapping("/list")
+    @GetMapping("/page")
     @ApiOperation(value = "用户列表")
     @ResponseBody
     @UserLoginToken
-    public ReturnMessageDto userList(Page page, UserEntity userEntity) {
-        QueryWrapper<UserEntity> query = Wrappers.query(userEntity);
-        Page page1 = userService.page(page, Wrappers.query(userEntity));
-        return new ReturnMessageDto(page.getRecords(), page.getCurrent(), Error.INFO_200);
+    public ReturnMessageDto userList(Page<UserEntity> page,UserEntity userEntity) {
+        LambdaQueryWrapper<UserEntity> eq = new QueryWrapper<UserEntity>().lambda().eq(UserEntity::getType, UserEntity.TYPE.USER.getName());
+        if (!StrUtil.hasEmpty(userEntity.getUserName())) {
+            eq.like(UserEntity::getUserName, userEntity.getUserName());
+        }
+        page = userService.page(page, eq);
+        return new ReturnMessageDto(page.getRecords(), page.getTotal(), Error.INFO_200);
     }
 }
