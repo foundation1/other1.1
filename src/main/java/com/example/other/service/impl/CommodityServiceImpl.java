@@ -14,11 +14,13 @@ import com.example.other.entity.dto.ReturnMessageDto;
 import com.example.other.mapper.CommodityMapper;
 import com.example.other.mapper.UserAddressMapper;
 import com.example.other.service.CommodityService;
+import com.example.other.service.CommodityWinnigService;
 import com.example.other.service.UserAddressService;
 import com.example.other.service.UserService;
 import com.example.other.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
@@ -34,6 +36,10 @@ public class CommodityServiceImpl extends ServiceImpl<CommodityMapper, Commodity
     private UserService userService;
     @Autowired
     private CommodityService commodityService;
+    @Autowired
+    private CommodityWinnigService commodityWinnigService;
+    @Autowired
+    private UserAddressService userAddressService;
 
     @Override
     public ReturnMessageDto addAll(MultipartFile file, CommodityEntity commodityEntity) {
@@ -87,6 +93,7 @@ public class CommodityServiceImpl extends ServiceImpl<CommodityMapper, Commodity
     }
 
     @Override
+    @Transactional(rollbackFor = {Exception.class})
     public ReturnMessageDto lottery(LotteryDto lotteryDto) {
         ReturnMessageDto returnMessageDto;
         UserEntity userEntity = userService.getById(lotteryDto.getUserId());
@@ -110,11 +117,28 @@ public class CommodityServiceImpl extends ServiceImpl<CommodityMapper, Commodity
         if (commodityEntity != null) {
             userEntity.setMoney(userEntity.getMoney().subtract(bigDecimal));
             userService.updateById(userEntity);
+            addWinnig(lotteryDto.getUserId(), commodityEntity.getId(), bigDecimal);
             returnMessageDto = new ReturnMessageDto(commodityEntity, Error.INFO_200);
         } else {
             returnMessageDto = new ReturnMessageDto(Error.INFO_208);
         }
 
         return returnMessageDto;
+    }
+
+    public boolean addWinnig(Long userId, Long commodityId, BigDecimal money) {
+        CommodityWinnigEntity commodityWinnigEntity = new CommodityWinnigEntity();
+        UserAddressEntity addressServiceById = userAddressService.getOne(new QueryWrapper<UserAddressEntity>().lambda().eq(UserAddressEntity::getUserId, userId).eq(UserAddressEntity::getIsDefault, UserAddressEntity.ISDEFAULT.YES.getName()));
+        String addStr = addressServiceById.getProvince() + "|" + addressServiceById.getCity() + "|" + addressServiceById.getCounty() + "|" + addressServiceById.getAddressDetail();
+        commodityWinnigEntity.setUserId(userId);
+        commodityWinnigEntity.setTel(addressServiceById.getTel());
+        commodityWinnigEntity.setCommodityId(commodityId);
+        commodityWinnigEntity.setAddress(addStr);
+        commodityWinnigEntity.setAddressId(addressServiceById.getId());
+        commodityWinnigEntity.setName(addressServiceById.getName());
+        commodityWinnigEntity.setGold(money);
+        commodityWinnigEntity.setStatus(CommodityWinnigEntity.STATUS.WINNING.getName());
+        commodityWinnigEntity.setStatusC(CommodityWinnigEntity.STATUSC.WINNING.getName());
+        return commodityWinnigService.save(commodityWinnigEntity);
     }
 }

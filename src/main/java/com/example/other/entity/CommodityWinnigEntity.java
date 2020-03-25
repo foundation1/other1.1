@@ -23,7 +23,8 @@ public class CommodityWinnigEntity extends Model<CommodityWinnigEntity> {
     private Long id;
     private Long userId;
     private Long commodityId;
-    private Long address;
+    private String address;
+    private Long addressId;
     private String platform;
     private String number;
     private String status;
@@ -35,6 +36,7 @@ public class CommodityWinnigEntity extends Model<CommodityWinnigEntity> {
     private String statusC;
     private String name;
     private String tel;
+    private String deliverGoods;
     @TableField(exist = false)
     private String commodityIntro;
     @TableField(exist = false)
@@ -58,6 +60,28 @@ public class CommodityWinnigEntity extends Model<CommodityWinnigEntity> {
 
         // 构造方法
         private STATUS(String name, String value) {
+            this.name = name;
+            this.value = value;
+        }
+
+        public String getName() {
+            return this.name;
+        }
+
+        public String getValue() {
+            return this.value;
+        }
+    }
+    public enum STATUSC {
+        WINNING("G", "金币"),
+        PURCHASE("M", "支付"),
+        ;
+        // 成员变量
+        private String name;
+        private String value;
+
+        // 构造方法
+        private STATUSC(String name, String value) {
             this.name = name;
             this.value = value;
         }
