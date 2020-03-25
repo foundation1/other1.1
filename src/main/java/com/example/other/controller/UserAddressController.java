@@ -1,6 +1,8 @@
 package com.example.other.controller;
 
 
+import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.example.other.config.jwt.UserLoginToken;
 import com.example.other.entity.UserAddressEntity;
@@ -92,7 +94,11 @@ public class UserAddressController {
     private ReturnMessageDto page(@RequestBody UserAddressEntity userAddressEntity, HttpServletRequest httpServletRequest) {
         UserEntity user = tokenService.getUser(httpServletRequest.getHeader("token"));
         userAddressEntity.setUserId(user.getId());
-        List<UserAddressEntity> list = userAddressService.list(new QueryWrapper<UserAddressEntity>().lambda().eq(UserAddressEntity::getUserId, userAddressEntity.getUserId()));
+        LambdaQueryWrapper<UserAddressEntity> eq = new QueryWrapper<UserAddressEntity>().lambda().eq(UserAddressEntity::getUserId, userAddressEntity.getUserId());
+        if (StrUtil.hasEmpty(userAddressEntity.getIsDefault())) {
+            eq.eq(UserAddressEntity::getIsDefault, userAddressEntity.getIsDefault());
+        }
+        List<UserAddressEntity> list = userAddressService.list(eq);
         return new ReturnMessageDto(list, Error.INFO_200);
     }
 }
